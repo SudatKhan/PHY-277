@@ -1,0 +1,36 @@
+!Name: Sudat Khan
+! n = 10, 284.803070
+! n = 100, 902.794189
+! n = 1000, 993.721680
+! The most accurate value is at n=1000 with 993.721680 as the result, this is because the results converge at this value
+program simpson
+    implicit none 
+    integer :: n !Number of subintervals
+    integer :: i !Loop index
+    real(kind=kind(1.0d0)), parameter :: a = 4000.0 
+    real(kind=kind(1.0d0)), parameter :: b = 15.15
+    real(kind=kind(1.0d0)), parameter :: c = 0.01
+    real(kind=kind(1.0d0)) :: x_lowerbound = 1.0, x_upperbound = 20.0 !lower and upper bounds of integral
+    real(kind=kind(1.0d0)) :: delta_x !width of subinterval
+    real(kind=kind(1.0d0)) :: sum !summation value
+    real(kind=kind(1.0d0)) :: x_i !hold x value at i-th location
+    real(kind=kind(1.0d0)) :: f_i, f_ihalf, f_i2 !value at ith, i+1/2 and i+1 locations
+
+    write(*,*) "Enter the number of subintervals"
+    read(*,*) n
+
+    delta_x = (x_upperbound - x_lowerbound) / (1.0 * n)
+    sum = 0.0
+    x_i = x_lowerbound
+    do i = 1,n,1
+        f_i = (x_i + cos(x_i)) * exp(cos(x_i)) + a * exp((-(x_i - b)**2)/c)
+        f_ihalf = ((x_i + (0.5*delta_x)) + cos(x_i + (0.5 *delta_x))) * exp(cos(x_i + (0.5*delta_x))) + a * exp(-(x_i - b)**2 / c)
+        f_i2 = ((x_i + delta_x) + cos(x_i + delta_x)) * exp(cos(x_i + delta_x)) + a * exp((-((x_i+delta_x) - b)**2)/c)
+        sum = sum + (1.0/6.0) * (f_i + (4.0*(f_ihalf)) + f_i2) *delta_x
+        x_i = x_i + delta_x
+    enddo
+
+    write(*,*) sum
+    stop 0
+end program simpson
+

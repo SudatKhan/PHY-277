@@ -1,0 +1,56 @@
+!Name: Sudat Khan
+!Purpose:  Fortran program that solves the Poisson equation for a 2-D steady state electromagnetics problem
+! at q(25,50) the potential is 8.229*10^-7
+program PDE
+    implicit none
+    !Variable Dictionary
+    integer, parameter :: width = 100 !number of cells along the width
+    integer, parameter :: height = 100 !number of cells along the height 
+    integer :: i,j
+    real, parameter :: l = 0.1 !length of each individual cell in cm, therefore the actual length/width of the box is 10cm by 10cm
+    real, dimension(0:height+ 1,0:width+1) :: u !array that holds original potential
+    real, dimension(0:height+1,0:width+1) :: u2 !array that holds the new potential
+    real, dimension(0:height+1,0:width+1) :: q !charge density
+    real :: max = 1.0 !maxx value chose arbitratry 
+    real, parameter :: PI=3.141592654 
+    real :: x, y !x and y-coordinates for the data table
+    integer :: lun1 !LUN
+
+    u = 0.0 !initialize to zero
+    u2 = u !set new potential to old potential
+    q = 0.0 !initialize to zero
+    q(25,25) = -4.0 ! charge density values given
+    q(75,75) = -4.0
+
+    do while(max > 1.0e-3) !loop to iterate around the inside of the box
+        do i=1,height 
+            do j=1,width
+                u2(i,j) = (u(i+1,j)+u(i-1,j)+u(i,j+1)+ u(i,j-1)-4.0*PI*(l**2)*q(i,j))/4.0
+            enddo
+        enddo
+            do j=0,width+1 
+                do i=0,height
+                    write(*,*) u2(i,j)
+                enddo
+            write(*,*) u2(height+1,j)
+            enddo
+        max = maxval(abs(u-u2))
+        write(*,*) ' maximum change = ',max
+        u = u2
+   enddo 
+
+    open(newunit=lun1,file='poisson.dat',status='replace') !writes new file and writes array x, y coordinates along with potential values
+    y = -0.5*l 
+    do j=0,width+1 
+        x = -0.5*l
+    do i=0,height+1 
+        write(lun1,*) x,y,u2(i,j)
+        x = x+l 
+    enddo
+    write(lun1,*) ' '
+    y = y+l
+    enddo
+close(unit=lun1)
+
+stop 0
+end program PDE

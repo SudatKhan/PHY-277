@@ -1,0 +1,21 @@
+!Name:Sudat Khan
+program wavelength
+    implicit none
+
+    real :: R = 1.09677583 * 10**(7) !Rydberg constant
+    integer :: n_1 !First Quantum Number
+    integer :: n_2 !Second Quantum Number
+    real :: lambda_in_meters !Wavelength of Photon in meters
+
+    write(*,*) "Enter first quantum number:" !The user inputs the first quantum number 
+    read(*,*) n_1
+
+    write(*,*) "Enter second quantum number:"
+    read(*,*) n_2
+
+    lambda_in_meters = 1.0 / (R * ((1.0/(n_2)**(2) - (1.0/(n_1)**(2)))))
+
+    write(*,*) "Wavelength of photon (in meters) =",lambda_in_meters
+    write(*,*) "Wavelength of photon (in Angstroms) =", (1.0 * 10.0**(10)) * lambda_in_meters !Converts to Angstroms via multiplication
+    stop 0
+end program wavelength
